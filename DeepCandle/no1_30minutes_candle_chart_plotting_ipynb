@@ -1,0 +1,450 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "no1_30minutes_candle_chart_plotting.ipynb의 사본",
+      "provenance": [],
+      "authorship_tag": "ABX9TyOqRegLKh6m3cvO/tZAUaQx",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/AnnJungChan/youngjin_TECH/blob/main/DeepCandle/no1_30minutes_candle_chart_plotting_ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# 패키지 로딩"
+      ],
+      "metadata": {
+        "id": "-0IwxT43rH3O"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "id": "bjLZN2ycrDA5",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "4408d1f0-da9f-43d7-85f3-5f51824cf3b1"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Mounted at /content/gdrive/\n",
+            "Collecting mpl_finance\n",
+            "  Downloading mpl_finance-0.10.1-py3-none-any.whl (8.4 kB)\n",
+            "Requirement already satisfied: matplotlib in /usr/local/lib/python3.7/dist-packages (from mpl_finance) (3.2.2)\n",
+            "Requirement already satisfied: cycler>=0.10 in /usr/local/lib/python3.7/dist-packages (from matplotlib->mpl_finance) (0.11.0)\n",
+            "Requirement already satisfied: kiwisolver>=1.0.1 in /usr/local/lib/python3.7/dist-packages (from matplotlib->mpl_finance) (1.4.2)\n",
+            "Requirement already satisfied: python-dateutil>=2.1 in /usr/local/lib/python3.7/dist-packages (from matplotlib->mpl_finance) (2.8.2)\n",
+            "Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in /usr/local/lib/python3.7/dist-packages (from matplotlib->mpl_finance) (3.0.8)\n",
+            "Requirement already satisfied: numpy>=1.11 in /usr/local/lib/python3.7/dist-packages (from matplotlib->mpl_finance) (1.21.5)\n",
+            "Requirement already satisfied: typing-extensions in /usr/local/lib/python3.7/dist-packages (from kiwisolver>=1.0.1->matplotlib->mpl_finance) (4.1.1)\n",
+            "Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.7/dist-packages (from python-dateutil>=2.1->matplotlib->mpl_finance) (1.15.0)\n",
+            "Installing collected packages: mpl-finance\n",
+            "Successfully installed mpl-finance-0.10.1\n"
+          ]
+        }
+      ],
+      "source": [
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "from google.colab import drive\n",
+        "drive.mount('/content/gdrive/')\n",
+        "!pip install mpl_finance\n",
+        "from mpl_finance import candlestick2_ohlc\n",
+        "import matplotlib.ticker as ticker\n",
+        "import matplotlib.pyplot as plt\n",
+        "import pandas as pd\n",
+        "from pandas_datareader import data  \n",
+        "from datetime import datetime\n",
+        "from IPython.display import display"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# 데이터 로딩"
+      ],
+      "metadata": {
+        "id": "CGv0v0TSsi9h"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "data=pd.read_csv('/content/gdrive/MyDrive/용접데이터/캔들차트분석/1호기 프로세스1/30min_diff1.csv')\n",
+        "data.drop(columns = ['Unnamed: 0'],inplace = True)"
+      ],
+      "metadata": {
+        "id": "jSXDd_Zoso1F"
+      },
+      "execution_count": 2,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# 캔들스틱 플랏 만들기"
+      ],
+      "metadata": {
+        "id": "eDEkGfEz7IIi"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "data['date']=data['time'].str.split(\" \", expand = True)[0]"
+      ],
+      "metadata": {
+        "id": "esg20wWN7KbN",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 423
+        },
+        "outputId": "4e01dffe-028a-4790-dbd7-812fea16a116"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "                     time       top    bottom       min       max  volume  \\\n",
+              "0     2021-01-05 08:30:00  0.093714 -0.002857 -0.100620  0.100915      36   \n",
+              "1     2021-01-05 09:00:00 -0.001620  0.000884 -0.001620  0.002165       5   \n",
+              "2     2021-01-05 09:30:00  0.000147  0.001517 -0.191800  0.191652     111   \n",
+              "3     2021-01-05 10:00:00 -0.001031  0.000442 -0.190769  0.191063      97   \n",
+              "4     2021-01-05 10:30:00 -0.194259 -0.001281 -0.194259  0.190238      80   \n",
+              "...                   ...       ...       ...       ...       ...     ...   \n",
+              "3783  2021-10-28 15:00:00 -0.009833 -0.035504 -0.100473  0.100326      60   \n",
+              "3784  2021-10-28 15:30:00 -0.002533  0.000044 -0.100179  0.100768     102   \n",
+              "3785  2021-10-28 16:00:00  0.095097  0.000000 -0.103684  0.099339      68   \n",
+              "3786  2021-10-28 16:30:00 -0.000295  0.000339 -0.099000  0.099295     119   \n",
+              "3787  2021-10-28 17:00:00  0.001178  0.000044 -0.099486  0.100665     113   \n",
+              "\n",
+              "            date  \n",
+              "0     2021-01-05  \n",
+              "1     2021-01-05  \n",
+              "2     2021-01-05  \n",
+              "3     2021-01-05  \n",
+              "4     2021-01-05  \n",
+              "...          ...  \n",
+              "3783  2021-10-28  \n",
+              "3784  2021-10-28  \n",
+              "3785  2021-10-28  \n",
+              "3786  2021-10-28  \n",
+              "3787  2021-10-28  \n",
+              "\n",
+              "[3788 rows x 7 columns]"
+            ],
+            "text/html": [
+              "\n",
+              "  <div id=\"df-bc3faa61-fdf8-403d-a943-ea75b7b5ec62\">\n",
+              "    <div class=\"colab-df-container\">\n",
+              "      <div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>time</th>\n",
+              "      <th>top</th>\n",
+              "      <th>bottom</th>\n",
+              "      <th>min</th>\n",
+              "      <th>max</th>\n",
+              "      <th>volume</th>\n",
+              "      <th>date</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>2021-01-05 08:30:00</td>\n",
+              "      <td>0.093714</td>\n",
+              "      <td>-0.002857</td>\n",
+              "      <td>-0.100620</td>\n",
+              "      <td>0.100915</td>\n",
+              "      <td>36</td>\n",
+              "      <td>2021-01-05</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>2021-01-05 09:00:00</td>\n",
+              "      <td>-0.001620</td>\n",
+              "      <td>0.000884</td>\n",
+              "      <td>-0.001620</td>\n",
+              "      <td>0.002165</td>\n",
+              "      <td>5</td>\n",
+              "      <td>2021-01-05</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>2021-01-05 09:30:00</td>\n",
+              "      <td>0.000147</td>\n",
+              "      <td>0.001517</td>\n",
+              "      <td>-0.191800</td>\n",
+              "      <td>0.191652</td>\n",
+              "      <td>111</td>\n",
+              "      <td>2021-01-05</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>2021-01-05 10:00:00</td>\n",
+              "      <td>-0.001031</td>\n",
+              "      <td>0.000442</td>\n",
+              "      <td>-0.190769</td>\n",
+              "      <td>0.191063</td>\n",
+              "      <td>97</td>\n",
+              "      <td>2021-01-05</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>2021-01-05 10:30:00</td>\n",
+              "      <td>-0.194259</td>\n",
+              "      <td>-0.001281</td>\n",
+              "      <td>-0.194259</td>\n",
+              "      <td>0.190238</td>\n",
+              "      <td>80</td>\n",
+              "      <td>2021-01-05</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>...</th>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3783</th>\n",
+              "      <td>2021-10-28 15:00:00</td>\n",
+              "      <td>-0.009833</td>\n",
+              "      <td>-0.035504</td>\n",
+              "      <td>-0.100473</td>\n",
+              "      <td>0.100326</td>\n",
+              "      <td>60</td>\n",
+              "      <td>2021-10-28</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3784</th>\n",
+              "      <td>2021-10-28 15:30:00</td>\n",
+              "      <td>-0.002533</td>\n",
+              "      <td>0.000044</td>\n",
+              "      <td>-0.100179</td>\n",
+              "      <td>0.100768</td>\n",
+              "      <td>102</td>\n",
+              "      <td>2021-10-28</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3785</th>\n",
+              "      <td>2021-10-28 16:00:00</td>\n",
+              "      <td>0.095097</td>\n",
+              "      <td>0.000000</td>\n",
+              "      <td>-0.103684</td>\n",
+              "      <td>0.099339</td>\n",
+              "      <td>68</td>\n",
+              "      <td>2021-10-28</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3786</th>\n",
+              "      <td>2021-10-28 16:30:00</td>\n",
+              "      <td>-0.000295</td>\n",
+              "      <td>0.000339</td>\n",
+              "      <td>-0.099000</td>\n",
+              "      <td>0.099295</td>\n",
+              "      <td>119</td>\n",
+              "      <td>2021-10-28</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3787</th>\n",
+              "      <td>2021-10-28 17:00:00</td>\n",
+              "      <td>0.001178</td>\n",
+              "      <td>0.000044</td>\n",
+              "      <td>-0.099486</td>\n",
+              "      <td>0.100665</td>\n",
+              "      <td>113</td>\n",
+              "      <td>2021-10-28</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "<p>3788 rows × 7 columns</p>\n",
+              "</div>\n",
+              "      <button class=\"colab-df-convert\" onclick=\"convertToInteractive('df-bc3faa61-fdf8-403d-a943-ea75b7b5ec62')\"\n",
+              "              title=\"Convert this dataframe to an interactive table.\"\n",
+              "              style=\"display:none;\">\n",
+              "        \n",
+              "  <svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\"viewBox=\"0 0 24 24\"\n",
+              "       width=\"24px\">\n",
+              "    <path d=\"M0 0h24v24H0V0z\" fill=\"none\"/>\n",
+              "    <path d=\"M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z\"/><path d=\"M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z\"/>\n",
+              "  </svg>\n",
+              "      </button>\n",
+              "      \n",
+              "  <style>\n",
+              "    .colab-df-container {\n",
+              "      display:flex;\n",
+              "      flex-wrap:wrap;\n",
+              "      gap: 12px;\n",
+              "    }\n",
+              "\n",
+              "    .colab-df-convert {\n",
+              "      background-color: #E8F0FE;\n",
+              "      border: none;\n",
+              "      border-radius: 50%;\n",
+              "      cursor: pointer;\n",
+              "      display: none;\n",
+              "      fill: #1967D2;\n",
+              "      height: 32px;\n",
+              "      padding: 0 0 0 0;\n",
+              "      width: 32px;\n",
+              "    }\n",
+              "\n",
+              "    .colab-df-convert:hover {\n",
+              "      background-color: #E2EBFA;\n",
+              "      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);\n",
+              "      fill: #174EA6;\n",
+              "    }\n",
+              "\n",
+              "    [theme=dark] .colab-df-convert {\n",
+              "      background-color: #3B4455;\n",
+              "      fill: #D2E3FC;\n",
+              "    }\n",
+              "\n",
+              "    [theme=dark] .colab-df-convert:hover {\n",
+              "      background-color: #434B5C;\n",
+              "      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);\n",
+              "      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));\n",
+              "      fill: #FFFFFF;\n",
+              "    }\n",
+              "  </style>\n",
+              "\n",
+              "      <script>\n",
+              "        const buttonEl =\n",
+              "          document.querySelector('#df-bc3faa61-fdf8-403d-a943-ea75b7b5ec62 button.colab-df-convert');\n",
+              "        buttonEl.style.display =\n",
+              "          google.colab.kernel.accessAllowed ? 'block' : 'none';\n",
+              "\n",
+              "        async function convertToInteractive(key) {\n",
+              "          const element = document.querySelector('#df-bc3faa61-fdf8-403d-a943-ea75b7b5ec62');\n",
+              "          const dataTable =\n",
+              "            await google.colab.kernel.invokeFunction('convertToInteractive',\n",
+              "                                                     [key], {});\n",
+              "          if (!dataTable) return;\n",
+              "\n",
+              "          const docLinkHtml = 'Like what you see? Visit the ' +\n",
+              "            '<a target=\"_blank\" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'\n",
+              "            + ' to learn more about interactive tables.';\n",
+              "          element.innerHTML = '';\n",
+              "          dataTable['output_type'] = 'display_data';\n",
+              "          await google.colab.output.renderOutput(dataTable, element);\n",
+              "          const docLink = document.createElement('div');\n",
+              "          docLink.innerHTML = docLinkHtml;\n",
+              "          element.appendChild(docLink);\n",
+              "        }\n",
+              "      </script>\n",
+              "    </div>\n",
+              "  </div>\n",
+              "  "
+            ]
+          },
+          "metadata": {},
+          "execution_count": 7
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## volume을 제외하고 이미지를 만듦"
+      ],
+      "metadata": {
+        "id": "yJFqNq9lAUz2"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "date_list=data['date'].unique()\n",
+        "date_list1=date_list[0:int(len(date_list)/2)]\n",
+        "date_list2=date_list[int(len(date_list)/2):]"
+      ],
+      "metadata": {
+        "id": "0_RTMaHaEvhl"
+      },
+      "execution_count": 8,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "for i in range(len(date_list1)) :\n",
+        "  sample1 = data.loc[data['date'] == date_list1[i],:]\n",
+        "  \n",
+        "  fig, ax = plt.subplots(figsize = (50,50))\n",
+        "  plt.axis('off')\n",
+        "  candlestick2_ohlc(ax, sample1['top'],sample1['max'],sample1['min'],sample1['bottom'],width = 0.5, colorup = 'r',colordown = 'g')\n",
+        "  ax.set_facecolor('black')\n",
+        "  fig.savefig('/content/gdrive/MyDrive/용접데이터/캔들차트분석/1호기/캔들플랏/'+f'{date_list1[i]}'+'.png')"
+      ],
+      "metadata": {
+        "id": "UFzgmViz78TL"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "for i in range(len(date_list2)) :\n",
+        "  sample1 = data.loc[data['date'] == date_list2[i],:]\n",
+        "  \n",
+        "  fig, ax = plt.subplots(figsize = (50,50))\n",
+        "  plt.axis('off')\n",
+        "  candlestick2_ohlc(ax, sample1['top'],sample1['max'],sample1['min'],sample1['bottom'],width = 0.5, colorup = 'r',colordown = 'g')\n",
+        "  ax.set_facecolor('black')\n",
+        "  fig.savefig('/content/gdrive/MyDrive/용접데이터/캔들차트분석/1호기/캔들플랏/'+f'{date_list2[i]}'+'.png')"
+      ],
+      "metadata": {
+        "id": "rXXbuwZZCzG3"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
