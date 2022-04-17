@@ -3,6 +3,11 @@
 *.docx
 *.m4a
 *.xlsx
-/회사 관련 자료/*
-.ipynb_checkpoints/*
+
+
 .DS_Store
+/논문/*
+/회사 관련 자료/*
+/회의/*
+.ipynb_checkpoints/*
+
