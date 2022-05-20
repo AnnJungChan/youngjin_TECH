@@ -3,7 +3,7 @@
 *.docx
 *.m4a
 *.xlsx
-
+*.hwp
 
 .DS_Store
 /논문/*
